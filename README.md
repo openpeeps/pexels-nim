@@ -17,10 +17,11 @@
 - [x] Direct to Object parser
 - [x] Written in Nim language
 
-First, create your API key on https://www.pexels.com/api/
+First, create your API key: https://www.pexels.com/api/
 
 ## Examples
 **Search for Photos**
+
 Search Pexels for any topic that you would like.
 
 ```nim
@@ -34,6 +35,16 @@ for pic in pics:
   echo picture.src.tiny
 ```
 
+**Search for Videos**
+```nim
+import pkg/pexels
+let
+  px = newPexelsClient(apikey = "123abc")
+  vids: PexelsVideosResponse =
+    waitFor px.videos("nature")
+for vid in vids:
+  echo vid
+```
 
 ### ❤ Contributions & Support
 - 🐛 Found a bug? [Create a new Issue](/issues)

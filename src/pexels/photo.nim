@@ -76,7 +76,7 @@ proc `$`*(photoResponse: PexelsPhotoResponse): string =
 
 proc search*(pexels: Pexels, query: string): Future[PexelsPhotosResponse] {.async.} =
   pexels.query["query"] = query
-  let res: AsyncResponse = await pexels.httpGet(PexelsEndpoint.epSearchPhotos, @[])
+  let res: AsyncResponse = await pexels.httpGet(PexelsEndpoint.epSearchPhotos)
   let body = await res.body
   result = fromJson(body, PexelsPhotosResponse)
   pexels.client.close()
