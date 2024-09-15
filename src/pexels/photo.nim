@@ -74,22 +74,7 @@ proc `$`*(photoResponse: PexelsPhotoResponse): string =
   ## Convert `PexelsPhotoResponse` object to JSON
   photoResponse.toJson()
 
-proc search*(pexels: Pexels, query: string): Future[PexelsPhotosResponse] {.async.} =
-  pexels.query["query"] = query
-  let res: AsyncResponse = await pexels.httpGet(PexelsEndpoint.epSearchPhotos)
-  let body = await res.body
-  result = fromJson(body, PexelsPhotosResponse)
-  pexels.client.close()
-
-proc search*(pexels: Pexels, query: string, perPage: uint): Future[PexelsPhotosResponse] {.async.} =
-  pexels.query["query"] = query
-  pexels.query["per_page"] = $(perPage)
-  let res: AsyncResponse = await pexels.httpGet(PexelsEndpoint.epSearchPhotos, @[])
-  let body = await res.body
-  result = fromJson(body, PexelsPhotosResponse)
-  pexels.client.close()
-
-proc insert*(q: var QueryTable, p: PexelsSearchParameters) =
+proc insert(q: var QueryTable, p: PexelsSearchParameters) =
   case p.locale
     of localeAny: discard
     else:
@@ -109,14 +94,35 @@ proc insert*(q: var QueryTable, p: PexelsSearchParameters) =
   q["page"] = $(p.page)
   q["per_page"] = $(p.perPage)
 
-proc search*(pexels: Pexels, query: string, params: PexelsSearchParameters): Future[PexelsPhotosResponse] {.async.} =
-  pexels.query["query"] = query
-  insert pexels.query, params
-  let res: AsyncResponse = await pexels.httpGet(PexelsEndpoint.epSearchPhotos, @[])
+#
+# Public procs
+#
+proc search*(px: Pexels, query: string): Future[PexelsPhotosResponse] {.async.} =
+  px.query["query"] = query
+  let res: AsyncResponse = await px.httpGet(PexelsEndpoint.epSearchPhotos)
   let body = await res.body
   result = fromJson(body, PexelsPhotosResponse)
-  pexels.client.close()
+  px.client.close()
 
+proc search*(px: Pexels, query: string, perPage: uint): Future[PexelsPhotosResponse] {.async.} =
+  px.query["query"] = query
+  px.query["per_page"] = $(perPage)
+  let res: AsyncResponse = await px.httpGet(PexelsEndpoint.epSearchPhotos, @[])
+  let body = await res.body
+  result = fromJson(body, PexelsPhotosResponse)
+  px.client.close()
+
+proc search*(px: Pexels, query: string, params: PexelsSearchParameters): Future[PexelsPhotosResponse] {.async.} =
+  px.query["query"] = query
+  insert px.query, params
+  let res: AsyncResponse = await px.httpGet(PexelsEndpoint.epSearchPhotos, @[])
+  let body = await res.body
+  result = fromJson(body, PexelsPhotosResponse)
+  px.client.close()
+
+#
+# Iterators
+#
 iterator items*(photosResponse: PexelsPhotosResponse): PexelsPhotoResponse =
   for p in photosResponse.photos:
     yield p
