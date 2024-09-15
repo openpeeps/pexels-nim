@@ -7,7 +7,7 @@ on:
     #   - main
 env:
   nim-version: 'stable'
-  nim-src: src/${{ github.event.repository.name }}.nim
+  nim-src: src/pexels.nim
   deploy-dir: .gh-pages
 jobs:
   docs:
