@@ -13,11 +13,27 @@
 </p>
 
 ## 😍 Key Features
-- [x] Open Source | `MIT` License
+- [x] Search Pexels for photos & videos
+- [x] Direct to Object parser
 - [x] Written in Nim language
 
+First, create your API key on https://www.pexels.com/api/
+
 ## Examples
-...
+**Search for Photos**
+Search Pexels for any topic that you would like.
+
+```nim
+import pkg/pexels
+
+let
+  px: Pexels = newPexelsClient(apikey = "123abc")
+  pics: PexelsPhotosResponse =
+    waitFor px.search("cat", perPage = 5)
+for pic in pics:
+  echo picture.src.tiny
+```
+
 
 ### ❤ Contributions & Support
 - 🐛 Found a bug? [Create a new Issue](/issues)
