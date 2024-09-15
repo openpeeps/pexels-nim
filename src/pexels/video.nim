@@ -52,14 +52,28 @@ proc `$`*(videoResponse: PexelsVideoPicture): string =
   ## Convert `PexelsVideoPicture` object to JSON
   videoResponse.toJson()
 
-proc videos*(pexels: Pexels, query: string): Future[PexelsVideosResponse] {.async.} =
+#
+# Public procs
+#
+proc videos*(px: Pexels, query: string): Future[PexelsVideosResponse] {.async.} =
   ## Search for videos by `query`
-  pexels.query["query"] = query
-  let res: AsyncResponse = await pexels.httpGet(PexelsEndpoint.epSearchVideos)
+  px.query["query"] = query
+  let res: AsyncResponse = await px.httpGet(PexelsEndpoint.epSearchVideos)
   let body = await res.body
   result = fromJson(body, PexelsVideosResponse)
-  pexels.client.close()
+  px.client.close()
 
+proc popular*(px: Pexels): Future[PexelsVideosResponse] {.async.} =
+  ## Retrieve the current popular Pexels videos
+  # todo filtering
+  let res: AsyncResponse = await px.httpGet(PexelsEndpoint.epPopularVideos)
+  let body = await res.body
+  result = fromJson(body, PexelsVideosResponse)
+  px.client.close()
+
+#
+# Iterators
+#
 iterator items*(videosResponse: PexelsVideosResponse): PexelsVideoResponse =
   for v in videosResponse.videos:
     yield v
