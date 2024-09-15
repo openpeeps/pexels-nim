@@ -1,2 +1,2 @@
-import pexels/[photo]
-export photo
+import pexels/[photo, video]
+export photo, video
